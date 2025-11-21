@@ -1,0 +1,1760 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AirMed - Medical Login Portal</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 20px;
+        color: #333;
+      }
+
+      .container {
+        width: 100%;
+        max-width: 1200px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .header {
+        text-align: center;
+        margin-bottom: 3rem;
+        color: white;
+      }
+
+      .header h1 {
+        font-size: 3rem;
+        margin-bottom: 0.5rem;
+        font-weight: 700;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+      }
+
+      .header p {
+        font-size: 1.2rem;
+        opacity: 0.9;
+      }
+
+      .login-horizontal {
+        display: flex;
+        gap: 2rem;
+        justify-content: center;
+        align-items: stretch;
+        flex-wrap: wrap;
+        margin-bottom: 2rem;
+        width: 100%;
+      }
+
+      .login-card {
+        background: white;
+        border-radius: 12px;
+        padding: 2rem;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        transition: all 0.3s ease;
+        cursor: pointer;
+        min-width: 250px;
+        max-width: 300px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        flex: 1;
+      }
+
+      .login-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+      }
+
+      .login-card-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+      }
+
+      .login-card-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: #333;
+      }
+
+      .login-card-description {
+        color: #666;
+        margin-bottom: 1.5rem;
+        line-height: 1.5;
+        flex-grow: 1;
+      }
+
+      .login-card-button {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 0.75rem 2rem;
+        border-radius: 25px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        width: 100%;
+      }
+
+      .login-card-button:hover {
+        transform: scale(1.05);
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+      }
+
+      .footer {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border-radius: 12px;
+        padding: 1.5rem;
+        text-align: center;
+        color: white;
+        margin-top: 2rem;
+        width: 100%;
+        max-width: 800px;
+      }
+
+      .footer-content p {
+        margin: 0.25rem 0;
+        opacity: 0.9;
+      }
+
+      .footer-content p:first-child {
+        font-weight: 600;
+      }
+
+      /* Modal Styles */
+      .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .modal-content {
+        background: white;
+        border-radius: 12px;
+        padding: 2rem;
+        width: 90%;
+        max-width: 400px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      }
+
+      .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+      }
+
+      .modal-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #333;
+      }
+
+      .close-button {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: #666;
+      }
+
+      .form-group {
+        margin-bottom: 1.5rem;
+        text-align: left;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        color: #555;
+      }
+
+      .form-group input {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        font-size: 1rem;
+      }
+
+      .submit-button {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 0.75rem 2rem;
+        border-radius: 6px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        width: 100%;
+        transition: all 0.3s ease;
+      }
+
+      .submit-button:hover {
+        transform: scale(1.02);
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+      }
+
+      /* PHC Dashboard Styles */
+      .phc-dashboard {
+        display: none;
+        min-height: 100vh;
+        flex-direction: column;
+        background-color: #f5f7fa;
+        width: 100%;
+      }
+
+      /* SubDistrict Dashboard Styles */
+      .subdistrict-dashboard {
+        display: none;
+        min-height: 100vh;
+        flex-direction: column;
+        background-color: #f5f7fa;
+        width: 100%;
+      }
+
+      /* Header Styles */
+      .dashboard-header {
+        background: linear-gradient(135deg, #3498db, #2c3e50);
+        color: white;
+        padding: 1rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .dashboard-header h1 {
+        font-size: 1.8rem;
+        font-weight: 600;
+      }
+
+      .logout-btn {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        padding: 0.5rem 1.5rem;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: all 0.3s ease;
+      }
+
+      .logout-btn:hover {
+        background: rgba(255, 255, 255, 0.3);
+      }
+
+      /* Tabs Styles */
+      .dashboard-tabs {
+        display: flex;
+        background: white;
+        border-bottom: 1px solid #e1e5e9;
+        padding: 0 2rem;
+      }
+
+      .tab-btn {
+        padding: 1rem 1.5rem;
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 1rem;
+        font-weight: 500;
+        color: #666;
+        border-bottom: 3px solid transparent;
+        transition: all 0.3s ease;
+      }
+
+      .tab-btn.active {
+        color: #3498db;
+        border-bottom-color: #3498db;
+      }
+
+      .tab-btn:hover:not(.active) {
+        color: #2c3e50;
+        background-color: #f8f9fa;
+      }
+
+      /* Content Area */
+      .dashboard-content {
+        flex: 1;
+        padding: 2rem;
+        max-width: 1200px;
+        margin: 0 auto;
+        width: 100%;
+      }
+
+      /* Emergency Requirement Form */
+      .emergency-requirement h2,
+      .previous-requests h2 {
+        font-size: 1.8rem;
+        margin-bottom: 0.5rem;
+        color: #2c3e50;
+      }
+
+      .subtitle {
+        color: #666;
+        margin-bottom: 2rem;
+        font-size: 1rem;
+      }
+
+      .emergency-form {
+        background: white;
+        padding: 2rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      }
+
+      .form-group {
+        margin-bottom: 1.5rem;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        color: #444;
+      }
+
+      .form-group input,
+      .form-group select,
+      .form-group textarea {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 1rem;
+        transition: border 0.3s ease;
+      }
+
+      .form-group input:focus,
+      .form-group select:focus,
+      .form-group textarea:focus {
+        outline: none;
+        border-color: #3498db;
+        box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+      }
+
+      .submit-btn {
+        background: #3498db;
+        color: white;
+        border: none;
+        padding: 0.75rem 2rem;
+        border-radius: 4px;
+        font-size: 1rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background 0.3s ease;
+      }
+
+      .submit-btn:hover {
+        background: #2980b9;
+      }
+
+      /* Previous Requests */
+      .search-bar {
+        margin-bottom: 1.5rem;
+      }
+
+      .search-input {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 1rem;
+      }
+
+      /* Stats Cards */
+      .stats-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+      }
+
+      .stat-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 8px;
+        text-align: center;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+      }
+
+      .stat-card h3 {
+        font-size: 0.9rem;
+        color: #666;
+        margin-bottom: 0.5rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .stat-card p {
+        font-size: 2rem;
+        font-weight: 700;
+      }
+
+      .stat-card.pending {
+        border-top: 4px solid #f39c12;
+      }
+
+      .stat-card.approved {
+        border-top: 4px solid #27ae60;
+      }
+
+      .stat-card.delivered {
+        border-top: 4px solid #3498db;
+      }
+
+      .stat-card.total {
+        border-top: 4px solid #9b59b6;
+      }
+
+      /* SubDistrict Specific Styles */
+      .overview-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+      }
+
+      .inventory-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+      }
+
+      .inventory-stat-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 8px;
+        text-align: center;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+      }
+
+      .inventory-stat-card.critical {
+        border-top: 4px solid #e74c3c;
+      }
+
+      .inventory-stat-card.low {
+        border-top: 4px solid #f39c12;
+      }
+
+      .inventory-stat-card.good {
+        border-top: 4px solid #27ae60;
+      }
+
+      .emergency-alerts-section {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        margin-bottom: 2rem;
+      }
+
+      .alert-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1rem;
+      }
+
+      .alert-btn {
+        background: #e74c3c;
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: background 0.3s ease;
+      }
+
+      .alert-btn:hover {
+        background: #c0392b;
+      }
+
+      .requests-list,
+      .inventory-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .request-card,
+      .inventory-item {
+        background: #f8f9fa;
+        padding: 1.5rem;
+        border-radius: 8px;
+        border-left: 4px solid #3498db;
+      }
+
+      .request-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.5rem;
+      }
+
+      .status-badges {
+        display: flex;
+        gap: 0.5rem;
+      }
+
+      /* Badges */
+      .urgency-badge,
+      .status-badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 500;
+        text-transform: capitalize;
+      }
+
+      .urgency-badge.critical {
+        background: #e74c3c;
+        color: white;
+      }
+
+      .urgency-badge.high {
+        background: #e67e22;
+        color: white;
+      }
+
+      .urgency-badge.medium {
+        background: #f39c12;
+        color: white;
+      }
+
+      .urgency-badge.low {
+        background: #95a5a6;
+        color: white;
+      }
+
+      .status-badge.pending {
+        background: #fff3cd;
+        color: #856404;
+      }
+
+      .status-badge.approved {
+        background: #d1ecf1;
+        color: #0c5460;
+      }
+
+      .status-badge.delivered {
+        background: #d4edda;
+        color: #155724;
+      }
+
+      .action-btn {
+        background: none;
+        border: none;
+        font-size: 1.2rem;
+        cursor: pointer;
+        padding: 0.25rem;
+        border-radius: 4px;
+        transition: background 0.3s ease;
+      }
+
+      .action-btn:hover {
+        background: #f0f0f0;
+      }
+
+      /* Requests Table */
+      .requests-table-container {
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      }
+
+      .requests-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .requests-table th {
+        background: #f8f9fa;
+        padding: 1rem;
+        text-align: left;
+        font-weight: 600;
+        color: #444;
+        border-bottom: 1px solid #e1e5e9;
+      }
+
+      .requests-table td {
+        padding: 1rem;
+        border-bottom: 1px solid #e1e5e9;
+      }
+
+      .requests-table tr:last-child td {
+        border-bottom: none;
+      }
+
+      .requests-table tr:hover {
+        background-color: #f8f9fa;
+      }
+
+      /* Inventory Items */
+      .item-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+      }
+
+      .item-category {
+        background: #e1f5fe;
+        color: #0288d1;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+      }
+
+      .item-details {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .stock-level {
+        text-align: right;
+      }
+
+      .stock-bar {
+        width: 150px;
+        height: 8px;
+        background: #e0e0e0;
+        border-radius: 4px;
+        margin-top: 0.5rem;
+        overflow: hidden;
+      }
+
+      .stock-fill {
+        height: 100%;
+        border-radius: 4px;
+        transition: width 0.3s ease;
+      }
+
+      .stock-fill.low {
+        background: #f39c12;
+      }
+
+      .stock-fill.good {
+        background: #27ae60;
+      }
+
+      .stock-fill.critical {
+        background: #e74c3c;
+      }
+
+      /* Inventory Page Specific Styles */
+      .inventory-controls {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        gap: 1rem;
+      }
+
+      .add-medicine-btn {
+        background: #27ae60;
+        color: white;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 6px;
+        font-size: 1rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background 0.3s ease;
+      }
+
+      .add-medicine-btn:hover {
+        background: #219a52;
+      }
+
+      .inventory-filters {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 2rem;
+      }
+
+      .filter-select {
+        padding: 0.75rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 1rem;
+        background: white;
+      }
+
+      .inventory-table-container {
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      }
+
+      .inventory-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .inventory-table th {
+        background: #f8f9fa;
+        padding: 1rem;
+        text-align: left;
+        font-weight: 600;
+        color: #444;
+        border-bottom: 1px solid #e1e5e9;
+      }
+
+      .inventory-table td {
+        padding: 1rem;
+        border-bottom: 1px solid #e1e5e9;
+      }
+
+      .inventory-table tr:last-child td {
+        border-bottom: none;
+      }
+
+      .inventory-table tr:hover {
+        background-color: #f8f9fa;
+      }
+
+      .stock-indicator {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .stock-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+      }
+
+      .stock-dot.critical {
+        background: #e74c3c;
+      }
+
+      .stock-dot.low {
+        background: #f39c12;
+      }
+
+      .stock-dot.good {
+        background: #27ae60;
+      }
+
+      /* Footer */
+      .dashboard-footer {
+        background: #2c3e50;
+        color: white;
+        text-align: center;
+        padding: 1rem;
+        margin-top: auto;
+      }
+
+      /* Back to Home Button */
+      .back-to-home {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        padding: 0.75rem 1.5rem;
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+        margin-top: 1rem;
+      }
+
+      .back-to-home:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: scale(1.05);
+      }
+
+      /* Tab Content */
+      .tab-content {
+        display: none;
+      }
+
+      .tab-content.active {
+        display: block;
+      }
+
+      /* Responsive Design */
+      @media (max-width: 768px) {
+        .dashboard-header {
+          padding: 1rem;
+          flex-direction: column;
+          gap: 1rem;
+        }
+
+        .dashboard-tabs {
+          padding: 0 1rem;
+          overflow-x: auto;
+        }
+
+        .dashboard-content {
+          padding: 1rem;
+        }
+
+        .emergency-form {
+          padding: 1.5rem;
+        }
+
+        .stats-cards,
+        .overview-stats,
+        .inventory-stats {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        .requests-table,
+        .inventory-table {
+          display: block;
+          overflow-x: auto;
+        }
+
+        .request-header {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 0.5rem;
+        }
+
+        .item-details {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 1rem;
+        }
+
+        .inventory-controls {
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        .inventory-filters {
+          flex-direction: column;
+        }
+
+        .login-horizontal {
+          flex-direction: column;
+          align-items: center;
+        }
+
+        .header h1 {
+          font-size: 2.5rem;
+        }
+
+        .header p {
+          font-size: 1rem;
+        }
+
+        .login-card {
+          max-width: 100%;
+          width: 100%;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .stats-cards,
+        .overview-stats,
+        .inventory-stats {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Login Page -->
+    <div class="container" id="loginPage">
+      <div class="header">
+        <h1>AirMed</h1>
+        <p>Select your module to access the dashboard</p>
+      </div>
+
+      <div class="login-horizontal">
+        <div class="login-card" data-type="phc">
+          <div class="login-card-icon">🏥</div>
+          <h3 class="login-card-title">PHC Login</h3>
+          <p class="login-card-description">Primary Health Centre access</p>
+          <button class="login-card-button" id="phcLoginBtn">Access</button>
+        </div>
+
+        <div class="login-card" data-type="subdistrict">
+          <div class="login-card-icon">🏢</div>
+          <h3 class="login-card-title">SubDistrict Login</h3>
+          <p class="login-card-description">
+            SubDistrict health officials access
+          </p>
+          <button class="login-card-button" id="subdistrictLoginBtn">
+            Access
+          </button>
+        </div>
+
+        <div class="login-card" data-type="admin">
+          <div class="login-card-icon">⚙️</div>
+          <h3 class="login-card-title">Admin Login</h3>
+          <p class="login-card-description">System administrators access</p>
+          <button class="login-card-button">Access</button>
+        </div>
+      </div>
+
+      <div class="footer">
+        <div class="footer-content">
+          <p>&copy; 2024 AirMed. All rights reserved.</p>
+          <p>Medical Inventory Management System</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- PHC Dashboard -->
+    <div class="phc-dashboard" id="phcDashboard">
+      <div class="dashboard-header">
+        <h1>PHC Dashboard</h1>
+        <button class="logout-btn" id="phcLogoutBtn">Logout</button>
+      </div>
+
+      <div class="dashboard-tabs">
+        <button class="tab-btn active" data-tab="emergency">
+          Emergency Requirement
+        </button>
+        <button class="tab-btn" data-tab="previous">Previous Requests</button>
+      </div>
+
+      <div class="dashboard-content">
+        <!-- Emergency Requirement Tab -->
+        <div class="tab-content active" id="emergencyContent">
+          <div class="emergency-requirement">
+            <h2>Emergency Requirement</h2>
+            <p class="subtitle">
+              Submit urgent medical supply or equipment requests
+            </p>
+
+            <form class="emergency-form" id="emergencyForm">
+              <div class="form-group">
+                <label for="itemType">Item Type *</label>
+                <select id="itemType" name="itemType" required>
+                  <option value="">Select item type</option>
+                  <option value="Medicines">Medicines</option>
+                  <option value="Medical Equipment">Medical Equipment</option>
+                  <option value="Oxygen">Oxygen</option>
+                  <option value="Medical Supplies">Medical Supplies</option>
+                  <option value="Blood Units">Blood Units</option>
+                  <option value="Vaccines">Vaccines</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="quantity">Quantity *</label>
+                <input
+                  type="text"
+                  id="quantity"
+                  name="quantity"
+                  placeholder="e.g., 100 units"
+                  required
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="urgencyLevel">Urgency Level *</label>
+                <select id="urgencyLevel" name="urgencyLevel" required>
+                  <option value="">Select urgency level</option>
+                  <option value="low">Low</option>
+                  <option value="medium">Medium</option>
+                  <option value="high">High</option>
+                  <option value="critical">Critical</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="description">Description *</label>
+                <textarea
+                  id="description"
+                  name="description"
+                  placeholder="Provide details about the requirement..."
+                  rows="4"
+                  required
+                ></textarea>
+              </div>
+
+              <button type="submit" class="submit-btn">
+                Submit Requirement
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <!-- Previous Requests Tab -->
+        <div class="tab-content" id="previousContent">
+          <div class="previous-requests">
+            <h2>Previous Requests</h2>
+            <p class="subtitle">
+              View and track your medical supply and equipment requests
+            </p>
+
+            <div class="search-bar">
+              <input
+                type="text"
+                id="searchInput"
+                placeholder="Search by ID, item type, or status..."
+                class="search-input"
+              />
+            </div>
+
+            <div class="stats-cards">
+              <div class="stat-card pending">
+                <h3>Pending</h3>
+                <p id="pendingCount">1</p>
+              </div>
+              <div class="stat-card approved">
+                <h3>Approved</h3>
+                <p id="approvedCount">2</p>
+              </div>
+              <div class="stat-card delivered">
+                <h3>Delivered</h3>
+                <p id="deliveredCount">2</p>
+              </div>
+              <div class="stat-card total">
+                <h3>Total</h3>
+                <p id="totalCount">5</p>
+              </div>
+            </div>
+
+            <div class="requests-table-container">
+              <table class="requests-table">
+                <thead>
+                  <tr>
+                    <th>Request ID</th>
+                    <th>Date</th>
+                    <th>Item Type</th>
+                    <th>Quantity</th>
+                    <th>Urgency</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="requestsTableBody">
+                  <!-- Requests will be populated by JavaScript -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dashboard-footer">
+        <p>Manage cookies or opt out</p>
+        <button class="back-to-home" id="backToHome">← Back to Home</button>
+      </div>
+    </div>
+
+    <!-- SubDistrict Dashboard -->
+    <div class="subdistrict-dashboard" id="subdistrictDashboard">
+      <div class="dashboard-header">
+        <h1>Subdistrict Medical Supply Dashboard</h1>
+        <button class="logout-btn" id="subdistrictLogoutBtn">Logout</button>
+      </div>
+
+      <div class="dashboard-tabs">
+        <button class="tab-btn active" data-tab="overview">Overview</button>
+        <button class="tab-btn" data-tab="inventory">Inventory</button>
+      </div>
+
+      <div class="dashboard-content">
+        <!-- Overview Tab -->
+        <div class="tab-content active" id="overviewContent">
+          <div class="overview-tab">
+            <div class="emergency-alerts-section">
+              <h2>Emergency Alerts</h2>
+              <div class="alert-actions">
+                <button class="alert-btn">Inventory</button>
+              </div>
+            </div>
+
+            <div class="overview-stats">
+              <div class="stat-card">
+                <h3>Pending Requests</h3>
+                <p class="stat-number" id="pendingRequestsCount">3</p>
+              </div>
+              <div class="stat-card">
+                <h3>Medical Alerts</h3>
+                <p class="stat-number" id="medicalAlertsCount">2</p>
+              </div>
+            </div>
+
+            <div class="phc-requests-section">
+              <h3>Medicine Requests from PHCs</h3>
+              <p class="section-subtitle">
+                Manage and respond to emergency medicine requests
+              </p>
+
+              <div class="requests-list" id="requestsList">
+                <!-- Requests will be populated by JavaScript -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Inventory Tab -->
+        <div class="tab-content" id="inventoryContent">
+          <div class="inventory-tab">
+            <div class="emergency-alerts-section">
+              <h2>Emergency Alerts</h2>
+              <div class="alert-actions">
+                <button class="alert-btn">Emergency Alerts</button>
+                <button class="alert-btn">Inventory</button>
+              </div>
+            </div>
+
+            <div class="inventory-stats">
+              <div class="inventory-stat-card">
+                <h3>Total Items</h3>
+                <p class="stat-number" id="totalItemsCount">8</p>
+              </div>
+              <div class="inventory-stat-card critical">
+                <h3>Critical Stock</h3>
+                <p class="stat-number" id="criticalStockCount">2</p>
+              </div>
+              <div class="inventory-stat-card low">
+                <h3>Low Stock</h3>
+                <p class="stat-number" id="lowStockCount">2</p>
+              </div>
+              <div class="inventory-stat-card good">
+                <h3>Good Stock</h3>
+                <p class="stat-number" id="goodStockCount">4</p>
+              </div>
+            </div>
+
+            <div class="inventory-controls">
+              <div class="search-bar">
+                <input
+                  type="text"
+                  id="inventorySearch"
+                  placeholder="Search medicines or categories..."
+                  class="search-input"
+                />
+              </div>
+              <button class="add-medicine-btn" id="addMedicineBtn">
+                + Add New Medicine
+              </button>
+            </div>
+
+            <div class="inventory-filters">
+              <select class="filter-select" id="categoryFilter">
+                <option value="">All Categories</option>
+                <option value="Diabetes">Diabetes</option>
+                <option value="Pain Relief">Pain Relief</option>
+                <option value="Infection">Infection</option>
+                <option value="First Aid">First Aid</option>
+              </select>
+              <select class="filter-select" id="statusFilter">
+                <option value="">All Status</option>
+                <option value="critical">Critical</option>
+                <option value="low">Low</option>
+                <option value="good">Good</option>
+              </select>
+            </div>
+
+            <div class="inventory-table-container">
+              <table class="inventory-table">
+                <thead>
+                  <tr>
+                    <th>Medicine ID</th>
+                    <th>Name</th>
+                    <th>Category</th>
+                    <th>Current Stock</th>
+                    <th>Max Stock</th>
+                    <th>Stock Level</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="inventoryTableBody">
+                  <!-- Inventory items will be populated by JavaScript -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dashboard-footer">
+        <p>Manage cookies or opt out</p>
+        <button class="back-to-home" id="subdistrictBackToHome">
+          ← Back to Home
+        </button>
+      </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div class="modal" id="loginModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title" id="modalTitle">Login</h2>
+          <button class="close-button" id="closeModal">&times;</button>
+        </div>
+        <form id="loginForm">
+          <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" required />
+          </div>
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" required />
+          </div>
+          <button type="submit" class="submit-button">Login</button>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      // Sample data for PHC requests
+      const requests = [
+        {
+          id: "REQ-001",
+          date: "2025-11-18",
+          itemType: "Medicines",
+          quantity: "500 units",
+          urgency: "critical",
+          status: "approved",
+        },
+        {
+          id: "REQ-002",
+          date: "2025-11-17",
+          itemType: "Medical Equipment",
+          quantity: "2 units",
+          urgency: "high",
+          status: "delivered",
+        },
+        {
+          id: "REQ-003",
+          date: "2025-11-16",
+          itemType: "Oxygen",
+          quantity: "10 cylinders",
+          urgency: "critical",
+          status: "delivered",
+        },
+        {
+          id: "REQ-004",
+          date: "2025-11-15",
+          itemType: "Medical Supplies",
+          quantity: "200 units",
+          urgency: "medium",
+          status: "pending",
+        },
+        {
+          id: "REQ-005",
+          date: "2025-11-14",
+          itemType: "Blood Units",
+          quantity: "5 units",
+          urgency: "high",
+          status: "approved",
+        },
+      ];
+
+      // Sample data for SubDistrict Dashboard
+      const phcRequests = [
+        {
+          id: 1,
+          name: "PHC Riverside",
+          status: "CRITICAL",
+          requestStatus: "PENDING",
+          location: "Riverside Village, Sector 4",
+          time: "5 mins ago",
+          distance: "12.3 km",
+          medicines: ["Insulin", "Glucose Strips", "Syringes"],
+        },
+        {
+          id: 2,
+          name: "PHC Greenfield",
+          status: "HIGH",
+          requestStatus: "PENDING",
+          location: "Greenfield Town, Sector 2",
+          time: "12 mins ago",
+          distance: "8.7 km",
+          medicines: ["Paracetamol", "Antibiotics", "Bandages"],
+        },
+      ];
+
+      const inventory = [
+        {
+          id: "MED001",
+          name: "Insulin",
+          category: "Diabetes",
+          stock: 45,
+          maxStock: 200,
+          unit: "vials",
+          status: "low",
+        },
+        {
+          id: "MED002",
+          name: "Paracetamol",
+          category: "Pain Relief",
+          stock: 150,
+          maxStock: 300,
+          unit: "tablets",
+          status: "good",
+        },
+        {
+          id: "MED003",
+          name: "Antibiotics",
+          category: "Infection",
+          stock: 25,
+          maxStock: 100,
+          unit: "packs",
+          status: "critical",
+        },
+        {
+          id: "MED004",
+          name: "Bandages",
+          category: "First Aid",
+          stock: 180,
+          maxStock: 250,
+          unit: "rolls",
+          status: "good",
+        },
+        {
+          id: "MED005",
+          name: "Oxygen Cylinders",
+          category: "Respiratory",
+          stock: 15,
+          maxStock: 50,
+          unit: "cylinders",
+          status: "critical",
+        },
+        {
+          id: "MED006",
+          name: "Blood Bags",
+          category: "Emergency",
+          stock: 35,
+          maxStock: 100,
+          unit: "bags",
+          status: "low",
+        },
+      ];
+
+      // DOM Elements
+      const loginPage = document.getElementById("loginPage");
+      const phcDashboard = document.getElementById("phcDashboard");
+      const subdistrictDashboard = document.getElementById(
+        "subdistrictDashboard"
+      );
+      const phcLoginBtn = document.getElementById("phcLoginBtn");
+      const subdistrictLoginBtn = document.getElementById(
+        "subdistrictLoginBtn"
+      );
+      const modal = document.getElementById("loginModal");
+      const closeModal = document.getElementById("closeModal");
+      const loginForm = document.getElementById("loginForm");
+      const phcLogoutBtn = document.getElementById("phcLogoutBtn");
+      const subdistrictLogoutBtn = document.getElementById(
+        "subdistrictLogoutBtn"
+      );
+      const backToHome = document.getElementById("backToHome");
+      const subdistrictBackToHome = document.getElementById(
+        "subdistrictBackToHome"
+      );
+      const addMedicineBtn = document.getElementById("addMedicineBtn");
+
+      // Tab elements
+      const tabButtons = document.querySelectorAll(".tab-btn");
+      const tabContents = document.querySelectorAll(".tab-content");
+
+      // PHC Dashboard elements
+      const emergencyForm = document.getElementById("emergencyForm");
+      const searchInput = document.getElementById("searchInput");
+      const requestsTableBody = document.getElementById("requestsTableBody");
+
+      // SubDistrict Dashboard elements
+      const requestsList = document.getElementById("requestsList");
+      const inventorySearch = document.getElementById("inventorySearch");
+      const inventoryTableBody = document.getElementById("inventoryTableBody");
+      const categoryFilter = document.getElementById("categoryFilter");
+      const statusFilter = document.getElementById("statusFilter");
+
+      let currentLoginType = "";
+
+      // PHC Login Button Click - Show Login Modal
+      phcLoginBtn.addEventListener("click", function () {
+        currentLoginType = "phc";
+        modal.style.display = "flex";
+        document.getElementById("modalTitle").textContent = "PHC Login";
+      });
+
+      // SubDistrict Login Button Click - Show Login Modal
+      subdistrictLoginBtn.addEventListener("click", function () {
+        currentLoginType = "subdistrict";
+        modal.style.display = "flex";
+        document.getElementById("modalTitle").textContent = "SubDistrict Login";
+      });
+
+      // Close modal when close button is clicked
+      closeModal.addEventListener("click", function () {
+        modal.style.display = "none";
+      });
+
+      // Close modal when clicking outside the modal content
+      window.addEventListener("click", function (event) {
+        if (event.target === modal) {
+          modal.style.display = "none";
+        }
+      });
+
+      // Handle login form submission
+      loginForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        const username = document.getElementById("username").value;
+        const password = document.getElementById("password").value;
+
+        // Simple validation - For demo, any credentials work
+        if (username && password) {
+          // Hide login page and modal
+          loginPage.style.display = "none";
+          modal.style.display = "none";
+
+          // Reset form
+          loginForm.reset();
+
+          // Show appropriate dashboard based on login type
+          if (currentLoginType === "phc") {
+            phcDashboard.style.display = "flex";
+            populateRequestsTable();
+          } else if (currentLoginType === "subdistrict") {
+            subdistrictDashboard.style.display = "flex";
+            populateRequestsList();
+            populateInventoryTable();
+          }
+        } else {
+          alert("Please enter both username and password");
+        }
+      });
+
+      // Logout Functionality
+      phcLogoutBtn.addEventListener("click", function () {
+        if (confirm("Are you sure you want to logout?")) {
+          phcDashboard.style.display = "none";
+          loginPage.style.display = "flex";
+        }
+      });
+
+      subdistrictLogoutBtn.addEventListener("click", function () {
+        if (confirm("Are you sure you want to logout?")) {
+          subdistrictDashboard.style.display = "none";
+          loginPage.style.display = "flex";
+        }
+      });
+
+      // Back to Home Buttons
+      backToHome.addEventListener("click", function () {
+        phcDashboard.style.display = "none";
+        loginPage.style.display = "flex";
+      });
+
+      subdistrictBackToHome.addEventListener("click", function () {
+        subdistrictDashboard.style.display = "none";
+        loginPage.style.display = "flex";
+      });
+
+      // Add Medicine Button
+      addMedicineBtn.addEventListener("click", function () {
+        alert("Add New Medicine functionality would open a form here!");
+        // In a real application, this would open a modal form to add new medicine
+      });
+
+      // Tab Switching for Dashboards
+      tabButtons.forEach((button) => {
+        button.addEventListener("click", function () {
+          const tabId = this.getAttribute("data-tab");
+
+          // Update active tab button
+          const parentTabs = this.closest(".dashboard-tabs");
+          parentTabs
+            .querySelectorAll(".tab-btn")
+            .forEach((btn) => btn.classList.remove("active"));
+          this.classList.add("active");
+
+          // Show active tab content
+          const parentContent = this.closest(".dashboard-content");
+          parentContent.querySelectorAll(".tab-content").forEach((content) => {
+            content.classList.remove("active");
+            if (content.id === `${tabId}Content`) {
+              content.classList.add("active");
+            }
+          });
+        });
+      });
+
+      // PHC Dashboard Functions
+      // Emergency Form Submission
+      emergencyForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        const formData = new FormData(emergencyForm);
+        const emergencyData = {
+          itemType: formData.get("itemType"),
+          quantity: formData.get("quantity"),
+          urgencyLevel: formData.get("urgencyLevel"),
+          description: formData.get("description"),
+        };
+
+        console.log("Emergency requirement submitted:", emergencyData);
+        alert("Emergency requirement submitted successfully!");
+
+        // Reset form
+        emergencyForm.reset();
+      });
+
+      // Populate Requests Table for PHC Dashboard
+      function populateRequestsTable(requestsData = requests) {
+        requestsTableBody.innerHTML = "";
+
+        requestsData.forEach((request) => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+                    <td>${request.id}</td>
+                    <td>${request.date}</td>
+                    <td>${request.itemType}</td>
+                    <td>${request.quantity}</td>
+                    <td>
+                        <span class="urgency-badge ${request.urgency}">
+                            ${request.urgency}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="status-badge ${request.status}">
+                            ${request.status}
+                        </span>
+                    </td>
+                    <td>
+                        <button class="action-btn" title="View details">🔺</button>
+                    </td>
+                `;
+          requestsTableBody.appendChild(row);
+        });
+
+        updateStats(requestsData);
+      }
+
+      // Update Statistics for PHC Dashboard
+      function updateStats(requestsData) {
+        const pending = requestsData.filter(
+          (req) => req.status === "pending"
+        ).length;
+        const approved = requestsData.filter(
+          (req) => req.status === "approved"
+        ).length;
+        const delivered = requestsData.filter(
+          (req) => req.status === "delivered"
+        ).length;
+        const total = requestsData.length;
+
+        document.getElementById("pendingCount").textContent = pending;
+        document.getElementById("approvedCount").textContent = approved;
+        document.getElementById("deliveredCount").textContent = delivered;
+        document.getElementById("totalCount").textContent = total;
+      }
+
+      // Search Functionality for PHC Dashboard
+      searchInput.addEventListener("input", function (e) {
+        const searchTerm = e.target.value.toLowerCase();
+
+        if (searchTerm) {
+          const filteredRequests = requests.filter(
+            (request) =>
+              request.id.toLowerCase().includes(searchTerm) ||
+              request.itemType.toLowerCase().includes(searchTerm) ||
+              request.status.toLowerCase().includes(searchTerm)
+          );
+          populateRequestsTable(filteredRequests);
+        } else {
+          populateRequestsTable();
+        }
+      });
+
+      // SubDistrict Dashboard Functions
+      // Populate Requests List for SubDistrict Dashboard
+      function populateRequestsList() {
+        requestsList.innerHTML = "";
+
+        phcRequests.forEach((request) => {
+          const requestCard = document.createElement("div");
+          requestCard.className = "request-card";
+          requestCard.innerHTML = `
+            <div class="request-header">
+              <h4>${request.name}</h4>
+              <div class="status-badges">
+                <span class="urgency-badge ${request.status.toLowerCase()}">
+                  ${request.status}
+                </span>
+                <span class="status-badge pending">
+                  ${request.requestStatus}
+                </span>
+              </div>
+            </div>
+            <p class="request-location">${request.location}</p>
+            <div class="request-details">
+              <span class="request-time">${request.time}</span>
+              <span class="request-distance">Distance: ${
+                request.distance
+              }</span>
+            </div>
+            <div class="medicines-list">
+              <strong>Medicines Required:</strong>
+              <ul>
+                ${request.medicines
+                  .map((medicine) => `<li>${medicine}</li>`)
+                  .join("")}
+              </ul>
+            </div>
+          `;
+          requestsList.appendChild(requestCard);
+        });
+      }
+
+      // Populate Inventory Table for SubDistrict Dashboard
+      function populateInventoryTable(inventoryData = inventory) {
+        inventoryTableBody.innerHTML = "";
+
+        inventoryData.forEach((item) => {
+          const row = document.createElement("tr");
+          const stockPercentage = (item.stock / item.maxStock) * 100;
+          const stockStatus =
+            stockPercentage <= 15
+              ? "critical"
+              : stockPercentage <= 30
+              ? "low"
+              : "good";
+
+          row.innerHTML = `
+            <td>${item.id}</td>
+            <td><strong>${item.name}</strong></td>
+            <td>${item.category}</td>
+            <td>${item.stock} ${item.unit}</td>
+            <td>${item.maxStock} ${item.unit}</td>
+            <td>
+              <div class="stock-indicator">
+                <div class="stock-dot ${stockStatus}"></div>
+                <span>${Math.round(stockPercentage)}%</span>
+              </div>
+            </td>
+            <td>
+              <span class="status-badge ${stockStatus}">
+                ${stockStatus.toUpperCase()}
+              </span>
+            </td>
+            <td>
+              <button class="action-btn" title="Edit">✏️</button>
+              <button class="action-btn" title="Restock">🔄</button>
+            </td>
+          `;
+          inventoryTableBody.appendChild(row);
+        });
+
+        // Update inventory statistics
+        updateInventoryStats(inventoryData);
+      }
+
+      // Update Inventory Statistics
+      function updateInventoryStats(inventoryData) {
+        const totalItems = inventoryData.length;
+        const criticalStock = inventoryData.filter(
+          (item) => (item.stock / item.maxStock) * 100 <= 15
+        ).length;
+        const lowStock = inventoryData.filter((item) => {
+          const percentage = (item.stock / item.maxStock) * 100;
+          return percentage > 15 && percentage <= 30;
+        }).length;
+        const goodStock = inventoryData.filter(
+          (item) => (item.stock / item.maxStock) * 100 > 30
+        ).length;
+
+        document.getElementById("totalItemsCount").textContent = totalItems;
+        document.getElementById("criticalStockCount").textContent =
+          criticalStock;
+        document.getElementById("lowStockCount").textContent = lowStock;
+        document.getElementById("goodStockCount").textContent = goodStock;
+      }
+
+      // Search Functionality for SubDistrict Inventory
+      inventorySearch.addEventListener("input", function (e) {
+        const searchTerm = e.target.value.toLowerCase();
+        filterInventory();
+      });
+
+      // Category Filter Functionality
+      categoryFilter.addEventListener("change", filterInventory);
+
+      // Status Filter Functionality
+      statusFilter.addEventListener("change", filterInventory);
+
+      // Combined Filter Function
+      function filterInventory() {
+        const searchTerm = inventorySearch.value.toLowerCase();
+        const categoryValue = categoryFilter.value;
+        const statusValue = statusFilter.value;
+
+        const filteredInventory = inventory.filter((item) => {
+          const matchesSearch =
+            item.name.toLowerCase().includes(searchTerm) ||
+            item.category.toLowerCase().includes(searchTerm) ||
+            item.id.toLowerCase().includes(searchTerm);
+
+          const matchesCategory =
+            !categoryValue || item.category === categoryValue;
+
+          const stockPercentage = (item.stock / item.maxStock) * 100;
+          let itemStatus = "good";
+          if (stockPercentage <= 15) itemStatus = "critical";
+          else if (stockPercentage <= 30) itemStatus = "low";
+
+          const matchesStatus = !statusValue || itemStatus === statusValue;
+
+          return matchesSearch && matchesCategory && matchesStatus;
+        });
+
+        populateInventoryTable(filteredInventory);
+      }
+
+      // Add keyboard event to close modal with ESC key
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape") {
+          modal.style.display = "none";
+        }
+      });
+
+      // Initialize the page
+      document.addEventListener("DOMContentLoaded", function () {
+        // Page starts with login page visible
+        loginPage.style.display = "flex";
+        phcDashboard.style.display = "none";
+        subdistrictDashboard.style.display = "none";
+        modal.style.display = "none";
+      });
+    </script>
+  </body>
+</html>

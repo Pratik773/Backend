@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AirMed - Medical Login Portal</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 20px;
+        color: #333;
+      }
+
+      .container {
+        width: 100%;
+        max-width: 1200px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .header {
+        text-align: center;
+        margin-bottom: 3rem;
+        color: white;
+      }
+
+      .header h1 {
+        font-size: 3rem;
+        margin-bottom: 0.5rem;
+        font-weight: 700;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+      }
+
+      .header p {
+        font-size: 1.2rem;
+        opacity: 0.9;
+      }
+
+      .login-horizontal {
+        display: flex;
+        gap: 2rem;
+        justify-content: center;
+        align-items: stretch;
+        flex-wrap: wrap;
+        margin-bottom: 2rem;
+        width: 100%;
+      }
+
+      .login-card {
+        background: white;
+        border-radius: 12px;
+        padding: 2rem;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        transition: all 0.3s ease;
+        cursor: pointer;
+        min-width: 250px;
+        max-width: 300px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        flex: 1;
+      }
+
+      .login-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+      }
+
+      .login-card-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+      }
+
+      .login-card-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: #333;
+      }
+
+      .login-card-description {
+        color: #666;
+        margin-bottom: 1.5rem;
+        line-height: 1.5;
+        flex-grow: 1;
+      }
+
+      .login-card-button {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 0.75rem 2rem;
+        border-radius: 25px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        width: 100%;
+        text-decoration: none;
+        display: block;
+      }
+
+      .login-card-button:hover {
+        transform: scale(1.05);
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+      }
+
+      .footer {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border-radius: 12px;
+        padding: 1.5rem;
+        text-align: center;
+        color: white;
+        margin-top: 2rem;
+        width: 100%;
+        max-width: 800px;
+      }
+
+      .footer-content p {
+        margin: 0.25rem 0;
+        opacity: 0.9;
+      }
+
+      .footer-content p:first-child {
+        font-weight: 600;
+      }
+
+      /* PHC Dashboard Styles */
+      .phc-dashboard {
+        display: none;
+        min-height: 100vh;
+        flex-direction: column;
+        background-color: #f5f7fa;
+        width: 100%;
+      }
+
+      /* Header Styles */
+      .dashboard-header {
+        background: linear-gradient(135deg, #3498db, #2c3e50);
+        color: white;
+        padding: 1rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .dashboard-header h1 {
+        font-size: 1.8rem;
+        font-weight: 600;
+      }
+
+      .logout-btn {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        padding: 0.5rem 1.5rem;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: all 0.3s ease;
+      }
+
+      .logout-btn:hover {
+        background: rgba(255, 255, 255, 0.3);
+      }
+
+      /* Tabs Styles */
+      .dashboard-tabs {
+        display: flex;
+        background: white;
+        border-bottom: 1px solid #e1e5e9;
+        padding: 0 2rem;
+      }
+
+      .tab-btn {
+        padding: 1rem 1.5rem;
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 1rem;
+        font-weight: 500;
+        color: #666;
+        border-bottom: 3px solid transparent;
+        transition: all 0.3s ease;
+      }
+
+      .tab-btn.active {
+        color: #3498db;
+        border-bottom-color: #3498db;
+      }
+
+      .tab-btn:hover:not(.active) {
+        color: #2c3e50;
+        background-color: #f8f9fa;
+      }
+
+      /* Content Area */
+      .dashboard-content {
+        flex: 1;
+        padding: 2rem;
+        max-width: 1200px;
+        margin: 0 auto;
+        width: 100%;
+      }
+
+      /* Emergency Requirement Form */
+      .emergency-requirement h2,
+      .previous-requests h2 {
+        font-size: 1.8rem;
+        margin-bottom: 0.5rem;
+        color: #2c3e50;
+      }
+
+      .subtitle {
+        color: #666;
+        margin-bottom: 2rem;
+        font-size: 1rem;
+      }
+
+      .emergency-form {
+        background: white;
+        padding: 2rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      }
+
+      .form-group {
+        margin-bottom: 1.5rem;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        color: #444;
+      }
+
+      .form-group input,
+      .form-group select,
+      .form-group textarea {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 1rem;
+        transition: border 0.3s ease;
+      }
+
+      .form-group input:focus,
+      .form-group select:focus,
+      .form-group textarea:focus {
+        outline: none;
+        border-color: #3498db;
+        box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+      }
+
+      .submit-btn {
+        background: #3498db;
+        color: white;
+        border: none;
+        padding: 0.75rem 2rem;
+        border-radius: 4px;
+        font-size: 1rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background 0.3s ease;
+      }
+
+      .submit-btn:hover {
+        background: #2980b9;
+      }
+
+      /* Previous Requests */
+      .search-bar {
+        margin-bottom: 1.5rem;
+      }
+
+      .search-input {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 1rem;
+      }
+
+      /* Stats Cards */
+      .stats-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+      }
+
+      .stat-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 8px;
+        text-align: center;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+      }
+
+      .stat-card h3 {
+        font-size: 0.9rem;
+        color: #666;
+        margin-bottom: 0.5rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .stat-card p {
+        font-size: 2rem;
+        font-weight: 700;
+      }
+
+      .stat-card.pending {
+        border-top: 4px solid #f39c12;
+      }
+
+      .stat-card.approved {
+        border-top: 4px solid #27ae60;
+      }
+
+      .stat-card.delivered {
+        border-top: 4px solid #3498db;
+      }
+
+      .stat-card.total {
+        border-top: 4px solid #9b59b6;
+      }
+
+      /* Requests Table */
+      .requests-table-container {
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      }
+
+      .requests-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .requests-table th {
+        background: #f8f9fa;
+        padding: 1rem;
+        text-align: left;
+        font-weight: 600;
+        color: #444;
+        border-bottom: 1px solid #e1e5e9;
+      }
+
+      .requests-table td {
+        padding: 1rem;
+        border-bottom: 1px solid #e1e5e9;
+      }
+
+      .requests-table tr:last-child td {
+        border-bottom: none;
+      }
+
+      .requests-table tr:hover {
+        background-color: #f8f9fa;
+      }
+
+      /* Badges */
+      .urgency-badge,
+      .status-badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 500;
+        text-transform: capitalize;
+      }
+
+      .urgency-badge.critical {
+        background: #e74c3c;
+        color: white;
+      }
+
+      .urgency-badge.high {
+        background: #e67e22;
+        color: white;
+      }
+
+      .urgency-badge.medium {
+        background: #f39c12;
+        color: white;
+      }
+
+      .urgency-badge.low {
+        background: #95a5a6;
+        color: white;
+      }
+
+      .status-badge.pending {
+        background: #fff3cd;
+        color: #856404;
+      }
+
+      .status-badge.approved {
+        background: #d1ecf1;
+        color: #0c5460;
+      }
+
+      .status-badge.delivered {
+        background: #d4edda;
+        color: #155724;
+      }
+
+      .action-btn {
+        background: none;
+        border: none;
+        font-size: 1.2rem;
+        cursor: pointer;
+        padding: 0.25rem;
+        border-radius: 4px;
+        transition: background 0.3s ease;
+      }
+
+      .action-btn:hover {
+        background: #f0f0f0;
+      }
+
+      /* Footer */
+      .dashboard-footer {
+        background: #2c3e50;
+        color: white;
+        text-align: center;
+        padding: 1rem;
+        margin-top: auto;
+      }
+
+      /* Back to Home Button */
+      .back-to-home {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        padding: 0.75rem 1.5rem;
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+        margin-top: 1rem;
+      }
+
+      .back-to-home:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: scale(1.05);
+      }
+
+      /* Responsive Design */
+      @media (max-width: 768px) {
+        .dashboard-header {
+          padding: 1rem;
+          flex-direction: column;
+          gap: 1rem;
+        }
+
+        .dashboard-tabs {
+          padding: 0 1rem;
+          overflow-x: auto;
+        }
+
+        .dashboard-content {
+          padding: 1rem;
+        }
+
+        .emergency-form {
+          padding: 1.5rem;
+        }
+
+        .stats-cards {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        .requests-table {
+          display: block;
+          overflow-x: auto;
+        }
+
+        .login-horizontal {
+          flex-direction: column;
+          align-items: center;
+        }
+
+        .header h1 {
+          font-size: 2.5rem;
+        }
+
+        .header p {
+          font-size: 1rem;
+        }
+
+        .login-card {
+          max-width: 100%;
+          width: 100%;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .stats-cards {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Login Page -->
+    <div class="container" id="loginPage">
+      <div class="header">
+        <h1>AirMed</h1>
+        <p>Select your module to access the dashboard</p>
+      </div>
+
+      <div class="login-horizontal">
+        <div class="login-card" data-type="phc">
+          <div class="login-card-icon">🏥</div>
+          <h3 class="login-card-title">PHC Login</h3>
+          <p class="login-card-description">Primary Health Centre access</p>
+          <button class="login-card-button" id="phcLoginBtn">Access</button>
+        </div>
+
+        <div class="login-card" data-type="subdistrict">
+          <div class="login-card-icon">🏢</div>
+          <h3 class="login-card-title">SubDistrict Login</h3>
+          <p class="login-card-description">
+            SubDistrict health officials access
+          </p>
+          <button class="login-card-button">Access</button>
+        </div>
+
+        <div class="login-card" data-type="admin">
+          <div class="login-card-icon">⚙️</div>
+          <h3 class="login-card-title">Admin Login</h3>
+          <p class="login-card-description">System administrators access</p>
+          <button class="login-card-button">Access</button>
+        </div>
+      </div>
+
+      <div class="footer">
+        <div class="footer-content">
+          <p>&copy; 2024 AirMed. All rights reserved.</p>
+          <p>Medical Inventory Management System</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- PHC Dashboard -->
+    <div class="phc-dashboard" id="phcDashboard">
+      <div class="dashboard-header">
+        <h1>PHC Dashboard</h1>
+        <button class="logout-btn" id="logoutBtn">Logout</button>
+      </div>
+
+      <div class="dashboard-tabs">
+        <button class="tab-btn active" data-tab="emergency">
+          Emergency Requirement
+        </button>
+        <button class="tab-btn" data-tab="previous">Previous Requests</button>
+      </div>
+
+      <div class="dashboard-content">
+        <!-- Emergency Requirement Tab -->
+        <div class="tab-content active" id="emergencyContent">
+          <div class="emergency-requirement">
+            <h2>Emergency Requirement</h2>
+            <p class="subtitle">
+              Submit urgent medical supply or equipment requests
+            </p>
+
+            <form class="emergency-form" id="emergencyForm">
+              <div class="form-group">
+                <label for="itemType">Item Type *</label>
+                <select id="itemType" name="itemType" required>
+                  <option value="">Select item type</option>
+                  <option value="Medicines">Medicines</option>
+                  <option value="Medical Equipment">Medical Equipment</option>
+                  <option value="Oxygen">Oxygen</option>
+                  <option value="Medical Supplies">Medical Supplies</option>
+                  <option value="Blood Units">Blood Units</option>
+                  <option value="Vaccines">Vaccines</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="quantity">Quantity *</label>
+                <input
+                  type="text"
+                  id="quantity"
+                  name="quantity"
+                  placeholder="e.g., 100 units"
+                  required
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="urgencyLevel">Urgency Level *</label>
+                <select id="urgencyLevel" name="urgencyLevel" required>
+                  <option value="">Select urgency level</option>
+                  <option value="low">Low</option>
+                  <option value="medium">Medium</option>
+                  <option value="high">High</option>
+                  <option value="critical">Critical</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="description">Description *</label>
+                <textarea
+                  id="description"
+                  name="description"
+                  placeholder="Provide details about the requirement..."
+                  rows="4"
+                  required
+                ></textarea>
+              </div>
+
+              <button type="submit" class="submit-btn">
+                Submit Requirement
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <!-- Previous Requests Tab -->
+        <div class="tab-content" id="previousContent">
+          <div class="previous-requests">
+            <h2>Previous Requests</h2>
+            <p class="subtitle">
+              View and track your medical supply and equipment requests
+            </p>
+
+            <div class="search-bar">
+              <input
+                type="text"
+                id="searchInput"
+                placeholder="Search by ID, item type, or status..."
+                class="search-input"
+              />
+            </div>
+
+            <div class="stats-cards">
+              <div class="stat-card pending">
+                <h3>Pending</h3>
+                <p id="pendingCount">1</p>
+              </div>
+              <div class="stat-card approved">
+                <h3>Approved</h3>
+                <p id="approvedCount">2</p>
+              </div>
+              <div class="stat-card delivered">
+                <h3>Delivered</h3>
+                <p id="deliveredCount">2</p>
+              </div>
+              <div class="stat-card total">
+                <h3>Total</h3>
+                <p id="totalCount">5</p>
+              </div>
+            </div>
+
+            <div class="requests-table-container">
+              <table class="requests-table">
+                <thead>
+                  <tr>
+                    <th>Request ID</th>
+                    <th>Date</th>
+                    <th>Item Type</th>
+                    <th>Quantity</th>
+                    <th>Urgency</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="requestsTableBody">
+                  <!-- Requests will be populated by JavaScript -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dashboard-footer">
+        <p>Manage cookies or opt out</p>
+        <button class="back-to-home" id="backToHome">← Back to Home</button>
+      </div>
+    </div>
+
+    <script>
+      // Sample data for previous requests
+      const requests = [
+        {
+          id: "REQ-001",
+          date: "2025-11-18",
+          itemType: "Medicines",
+          quantity: "500 units",
+          urgency: "critical",
+          status: "approved",
+        },
+        {
+          id: "REQ-002",
+          date: "2025-11-17",
+          itemType: "Medical Equipment",
+          quantity: "2 units",
+          urgency: "high",
+          status: "delivered",
+        },
+        {
+          id: "REQ-003",
+          date: "2025-11-16",
+          itemType: "Oxygen",
+          quantity: "10 cylinders",
+          urgency: "critical",
+          status: "delivered",
+        },
+        {
+          id: "REQ-004",
+          date: "2025-11-15",
+          itemType: "Medical Supplies",
+          quantity: "200 units",
+          urgency: "medium",
+          status: "pending",
+        },
+        {
+          id: "REQ-005",
+          date: "2025-11-14",
+          itemType: "Blood Units",
+          quantity: "5 units",
+          urgency: "high",
+          status: "approved",
+        },
+      ];
+
+      // DOM Elements
+      const loginPage = document.getElementById("loginPage");
+      const phcDashboard = document.getElementById("phcDashboard");
+      const phcLoginBtn = document.getElementById("phcLoginBtn");
+      const logoutBtn = document.getElementById("logoutBtn");
+      const backToHome = document.getElementById("backToHome");
+      const tabButtons = document.querySelectorAll(".tab-btn");
+      const tabContents = document.querySelectorAll(".tab-content");
+      const emergencyForm = document.getElementById("emergencyForm");
+      const searchInput = document.getElementById("searchInput");
+      const requestsTableBody = document.getElementById("requestsTableBody");
+
+      // PHC Login Button Click - Direct access to dashboard
+      phcLoginBtn.addEventListener("click", function () {
+        loginPage.style.display = "none";
+        phcDashboard.style.display = "flex";
+        populateRequestsTable();
+      });
+
+      // Logout Functionality
+      logoutBtn.addEventListener("click", function () {
+        if (confirm("Are you sure you want to logout?")) {
+          phcDashboard.style.display = "none";
+          loginPage.style.display = "flex";
+        }
+      });
+
+      // Back to Home Button
+      backToHome.addEventListener("click", function () {
+        phcDashboard.style.display = "none";
+        loginPage.style.display = "flex";
+      });
+
+      // Tab Switching for Dashboard
+      tabButtons.forEach((button) => {
+        button.addEventListener("click", function () {
+          const tabId = this.getAttribute("data-tab");
+
+          // Update active tab button
+          tabButtons.forEach((btn) => btn.classList.remove("active"));
+          this.classList.add("active");
+
+          // Show active tab content
+          tabContents.forEach((content) => {
+            content.classList.remove("active");
+            if (content.id === `${tabId}Content`) {
+              content.classList.add("active");
+            }
+          });
+        });
+      });
+
+      // Emergency Form Submission
+      emergencyForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        const formData = new FormData(emergencyForm);
+        const emergencyData = {
+          itemType: formData.get("itemType"),
+          quantity: formData.get("quantity"),
+          urgencyLevel: formData.get("urgencyLevel"),
+          description: formData.get("description"),
+        };
+
+        console.log("Emergency requirement submitted:", emergencyData);
+        alert("Emergency requirement submitted successfully!");
+
+        // Reset form
+        emergencyForm.reset();
+      });
+
+      // Populate Requests Table
+      function populateRequestsTable(requestsData = requests) {
+        requestsTableBody.innerHTML = "";
+
+        requestsData.forEach((request) => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+                    <td>${request.id}</td>
+                    <td>${request.date}</td>
+                    <td>${request.itemType}</td>
+                    <td>${request.quantity}</td>
+                    <td>
+                        <span class="urgency-badge ${request.urgency}">
+                            ${request.urgency}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="status-badge ${request.status}">
+                            ${request.status}
+                        </span>
+                    </td>
+                    <td>
+                        <button class="action-btn" title="View details">🔺</button>
+                    </td>
+                `;
+          requestsTableBody.appendChild(row);
+        });
+
+        updateStats(requestsData);
+      }
+
+      // Update Statistics
+      function updateStats(requestsData) {
+        const pending = requestsData.filter(
+          (req) => req.status === "pending"
+        ).length;
+        const approved = requestsData.filter(
+          (req) => req.status === "approved"
+        ).length;
+        const delivered = requestsData.filter(
+          (req) => req.status === "delivered"
+        ).length;
+        const total = requestsData.length;
+
+        document.getElementById("pendingCount").textContent = pending;
+        document.getElementById("approvedCount").textContent = approved;
+        document.getElementById("deliveredCount").textContent = delivered;
+        document.getElementById("totalCount").textContent = total;
+      }
+
+      // Search Functionality
+      searchInput.addEventListener("input", function (e) {
+        const searchTerm = e.target.value.toLowerCase();
+
+        if (searchTerm) {
+          const filteredRequests = requests.filter(
+            (request) =>
+              request.id.toLowerCase().includes(searchTerm) ||
+              request.itemType.toLowerCase().includes(searchTerm) ||
+              request.status.toLowerCase().includes(searchTerm)
+          );
+          populateRequestsTable(filteredRequests);
+        } else {
+          populateRequestsTable();
+        }
+      });
+
+      // Initialize the page
+      document.addEventListener("DOMContentLoaded", function () {
+        // Page starts with login page visible
+        loginPage.style.display = "flex";
+        phcDashboard.style.display = "none";
+      });
+    </script>
+  </body>
+</html>
